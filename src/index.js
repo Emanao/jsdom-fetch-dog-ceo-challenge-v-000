@@ -2,47 +2,88 @@ console.log('%c HI', 'color: firebrick')
 
 const imgUrl = "https://dog.ceo/api/breeds/image/random/4";
 const breedUrl = 'https://dog.ceo/api/breeds/list/all';
+let breeds = [];
 
-document.addEventListener("DOMContentLoaded", DogCEOPicsFetch);
-document.addEventListener("DOMContentLoaded", DogCEOBreedsFetch);
+document.addEventListener("DOMContentLoaded", DogCEOPicFetch);
+document.addEventListener("DOMContentLoaded", DogCEOBreedFetch);
+document.addEventListener("DOMContentLoaded", () => document.getElementById("breed-dropdown").addEventListener("change", sortBreedsBy));
 
-function DogCEOPicsFetch(){
+function getDogContainer(){
+  const dogContainer = document.getElementById("dog-image-container");
+  return dogContainer;
+}
+
+function DogCEOPicFetch(){
   fetch(imgUrl)
   .then(response => response.json())
   .then((json) => {
-    const dogContainer = document.getElementById("dog-image-container");
     const dogsAry = json.message;
     for (const dog of dogsAry){
-      const img = document.createElement("img");
-      img.setAttribute("src", dog);
-      img.setAttribute("width", 200);
-      img.setAttribute("height", 200);
-      dogContainer.appendChild(img);
+      addDogToDogContainer(dog);
     }
   });
 }
 
-function DogCEOBreedsFetch(){
+function addDogToDogContainer(dog){
+  const img = document.createElement("img");
+  img.setAttribute("src", dog);
+  img.setAttribute("width", 200);
+  img.setAttribute("height", 200);
+  getDogContainer().appendChild(img);
+}
+
+function getBreedContainer(){
+  const breedContainer= document.getElementById("dog-breeds");
+  return  breedContainer;
+}
+
+function DogCEOBreedFetch(){
   fetch(breedUrl)
   .then(response => response.json())
   .then((json) => {
-    console.log(json);
-     const breedsContainer = document.getElementById("dog-breeds");
-     const typesAry = json.message;
-     console.log(typesAry);
-     for (const type in typesAry){
-       const breedsAry= typesAry[type];
-       if (Array.isArray(breedsAry)){
-         for (const breed of breedsAry){
-           const li = document.createElement("li");
-           li.innerText = breed;
-           li.addEventListener("click", changeFontColor);
-           breedsContainer.appendChild(li);
-         }
-       }
-    }
-  })
+     const jsonDogTypesAry = json.message;
+     breeds = [];
+     addToBreedContainer(jsonDogTypesAry);
+  });
 }
+
+function addToBreedContainer(jsonDogTypesAry){
+  for (const type in jsonDogTypesAry){
+    const jsonDogBreedsAry= jsonDogTypesAry[type];
+    if (Array.isArray(jsonDogBreedsAry)){
+      for (const breed of jsonDogBreedsAry){
+        addBreedToBreedContainer(breed);
+        breeds.push(breed);
+      }
+    }
+  }
+}
+
+function addBreedToBreedContainer(breed){
+  const li = document.createElement("li");
+  li.innerText = breed;
+  li.addEventListener("click", changeFontColor, false);
+  getBreedContainer().appendChild(li);
+}
+
+function updateBreedContainer(updatedBreeds){
+  resetBreedContainer();
+  for (const breed of updatedBreeds){
+    addBreedToBreedContainer(breed);
+  }
+}
+
+function resetBreedContainer(){
+  getBreedContainer().textContent ="";
+}
+
+
+function sortBreedsBy(event){
+  const selectedOption = event.currentTarget.value;
+  const sortedBreeds = breeds.filter((breed)=>breed.startsWith(selectedOption));
+  updateBreedContainer(sortedBreeds);
+}
+
 function changeFontColor(event){
   event.currentTarget.style.color = "red";
 }
