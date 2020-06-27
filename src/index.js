@@ -1,8 +1,11 @@
 console.log('%c HI', 'color: firebrick')
+
 const imgUrl = "https://dog.ceo/api/breeds/image/random/4";
 const breedUrl = 'https://dog.ceo/api/breeds/list/all';
+
 document.addEventListener("DOMContentLoaded", DogCEOPicsFetch);
 document.addEventListener("DOMContentLoaded", DogCEOBreedsFetch);
+
 function DogCEOPicsFetch(){
   fetch(imgUrl)
   .then(response => response.json())
@@ -18,6 +21,7 @@ function DogCEOPicsFetch(){
     }
   });
 }
+
 function DogCEOBreedsFetch(){
   fetch(breedUrl)
   .then(response => response.json())
@@ -32,9 +36,13 @@ function DogCEOBreedsFetch(){
          for (const breed of breedsAry){
            const li = document.createElement("li");
            li.innerText = breed;
+           li.addEventListener("click", changeFontColor);
            breedsContainer.appendChild(li);
          }
        }
     }
   })
+}
+function changeFontColor(event){
+  event.currentTarget.style.color = "red";
 }
