@@ -26,7 +26,7 @@ function DogCEOPicFetch(){
 
 function addDogToDogContainer(dog){
   const img = document.createElement("img");
-  // img.setAttribute("src", dog);
+   img.setAttribute("src", dog);
   // img.setAttribute("width", 200);
   // img.setAttribute("height", 200);
   getDogContainer().appendChild(img);
